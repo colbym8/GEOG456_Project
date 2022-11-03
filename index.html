@@ -1,102 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <base target="_top">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Food Insecurity Factors</title>
-    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico">
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="">
-      <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
-      <!-- Load jQuery and PapaParse to read data from a CSV file -->
-      <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-      <!-- <script src="./ChoroplethData/js/childHunger.js"></script> -->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>**TEST**</title>
+    <base target="_top">        
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="crossorigin=""></script>  
+    
+    <script src="./ChoroplethData/js/overallHunger.js"></script>
+    <script src="./ChoroplethData/js/childHunger.js"></script>
+    <!-- <script src="./ChoroplethData/js/disability.js"></script> -->
+    <!-- <script src="./ChoroplethData/js/education.js"></script>
+    <script src="./ChoroplethData/js/income_black_dif.js"></script>
+    <script src="./ChoroplethData/js/income_lat_dif.js"></script>
+    <script src="./ChoroplethData/js/mealCost.js"></script> -->
+    <!-- <script src="./ChoroplethData/js/poverty.js"></script>
+    <script src="./ChoroplethData/js/race_eth.js"></script>
+    <script src="./ChoroplethData/js/unemployment.js"></script> -->
 
-      <!-- leaflet style -->
     <style>
-      html, body {
-        height: 100%;
-        margin: 5;
-      }
-      .leaflet-container {
-        height: 400px;
-        width: 600px;
-        max-width: 100%;
-        max-height: 100%;
-      }
+        h1 {
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 36px;
+        position: relative;
+        top: 10%;
+        text-align: center;
+        outline-style: ridge;
+        -webkit-text-stroke-width: 1px;
+        }
+        h2 {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        h3 {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        .legend {
+            line-height: 18px;
+            color: #000;
+            background-color: #ffffff;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7; 
+        }
+        #map { height: 400px;
+            width: 900px;
+            background-color: lightslategray;
+            text-align: center;
+        }
     </style>
-    <!-- <script src="./LayerData/SNAP-NC.js"></script> -->
-  </head>
+</head>
 <body>
-    <!-- <script>
-      var selectedYear = '2010'
-        function myStyle(feature) {
+    <h1>Underlying Food Insecurity Indicators</h1>
+    <h2 id="theYear">Year</h2>
+
+        <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSlider(this.value)">
+        <div id="map"></div>
+        <div class="legend"></div>
+
+    <script>
+        var map = L.map('map').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // OVERALL HUNGER //
+        var selectedYear = '2010'
+        function myStyleOH(feature) {
             return {
-            "fillColor": getColor(feature.properties[selectedYear]),
-            "color": "black",// notice that the selected year will call the property of the geojson
+            "fillColor": getColorOH(feature.properties[selectedYear]),
+            "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
             "fillOpacity": 0.7
-            }
-        };
+            }};
+        function getColorOH(colorScaleOH) {
+            return colorScaleOH < 10 ? "#238b45" 
+            :colorScaleOH < 15 ? "#ffffb2" 
+            :colorScaleOH < 20 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        function getColor(colorScale) {
-            return colorScale < 0.15 ? "#238b45" 
-            :colorScale < 0.2 ? "#ffffb2" 
-            :colorScale < 0.25 ? "#fd8d3c"
+        var overallHungerRate = L.geoJSON(overallHunger, {style: myStyleOH}).addTo(map);
+
+        function moveSlider(value) {
+            selectedYear = value;
+            overallHungerRate.remove()
+            overallHungerRate = L.geoJSON(overallHunger, {style: myStyleOH}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
+
+    // CHILD HUNGER //
+        function myStyleCH(feature) {
+
+            return {
+            "fillColor": getColorCH(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }};
+
+        function getColorCH(colorScaleCH) {
+            return colorScaleCH < 15 ? "#238b45" 
+            :colorScaleCH < 20 ? "#ffffb2" 
+            :colorScaleCH < 25 ? "#fd8d3c"
             : '#e31a1c';
         };
 
-        var childHungerRate = L.geoJSON(childHunger, {style: myStyle}).addTo(map);
+        var childHungerRate = L.geoJSON(childHunger, {style: myStyleCH}).addTo(map);
 
         function moveSlider(value) {
-            selectedYear = value; // this changes the value of the selectedYear variable
-            childHungerRate.remove() // this removes the geojson 
-            childHungerRate = L.geoJSON(childHunger, {style: myStyle}).addTo(map); // this creates a new geojson, this time it will be based on the new selected Year 
+            selectedYear = value;
+            // Remove geojson
+            childHungerRate.remove()
+            // new geojson
+            childHungerRate = L.geoJSON(childHunger, {style: myStyleCH}).addTo(map);
             document.getElementById('theYear').innerHTML = 'Year: '+ value  
         }
         moveSlider('2010')
-    </script> -->
+        // // MEAL COST //
+        // function myStyle(feature) {
 
-  <script>
+        //     return {
+        //     "fillColor": getColorMH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorMH(colorScaleMC) {
+        //     return colorScaleMC < 0.10 ? "#238b45" 
+        //     :colorScaleMC < 0.15 ? "#ffffb2" 
+        //     :colorScaleMC < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var MC = L.geoJSON(mealCost, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     MC.remove()
+        //     MC = L.geoJSON(mealCost, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+
+        // // DISABILITY
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+        // // EDUCATIONAL ATTAINMENT LESS THAN HIGH SCHOOL DIPLOMA OR GED //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }};
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+        // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND LATINO //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+        // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND BLACK POPULATION //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+
+        // // POVERTY //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+
+        // // RACE AND ETHINICITY //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+        // // UNEMPLOYMENT //
+        // function myStyle(feature) {
+
+        //     return {
+        //     "fillColor": getColorOH(feature.properties[selectedYear]),
+        //     "color": "black",
+        //     "weight": 0.75,
+        //     "opacity": 2.0,
+        //     "fillOpacity": 0.7
+        //     }
+        //     };
+        //     function getColorOH(colorScaleOH) {
+        //     return colorScaleOH < 0.10 ? "#238b45" 
+        //     :colorScaleOH < 0.15 ? "#ffffb2" 
+        //     :colorScaleOH < 0.2 ? "#fd8d3c"
+        //     : '#e31a1c';
+        //     };
+
+        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+
+        //     function moveSlider(value) {
+        //     selectedYear = value;
+        //     overallHungerRate.remove()
+        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
+        //     }
+        // moveSlider('2010')
+
     // Food Bank markers manually created
-    const foodBanks = L.layerGroup();
+    var foodBanks = L.layerGroup().addTo(map);
   
-    const mannaFB = L.marker([35.57501, -82.501873], {icon: iffsIcon}).bindPopup('MANNA Food Bank').addTo(foodBanks);
-    const secHarvMet = L.marker([35.239401, -80.837983]).bindPopup('Second Harvest Food Bank of Metrolina').addTo(foodBanks);
-    const FBAbermarle = L.marker([36.285388, -76.213284]).bindPopup('Food Bank of the Abermarle').addTo(foodBanks);
-    const secHarvSE = L.marker([35.034307, -78.908828]).bindPopup('Second Harvest of Southeast NC').addTo(foodBanks);
-    const FBCE = L.marker([35.831161, -78.607644]).bindPopup('Food Bank of Central and Eastern NC').addTo(foodBanks);
-    const IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
-    const secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
+    var mannaFB = L.marker([35.57501, -82.501873]).bindPopup('MANNA Food Bank').addTo(foodBanks);
+    var secHarvMet = L.marker([35.239401, -80.837983]).bindPopup('Second Harvest Food Bank of Metrolina').addTo(foodBanks);
+    var FBAbermarle = L.marker([36.285388, -76.213284]).bindPopup('Food Bank of the Abermarle').addTo(foodBanks);
+    var secHarvSE = L.marker([35.034307, -78.908828]).bindPopup('Second Harvest of Southeast NC').addTo(foodBanks);
+    var FBCE = L.marker([35.831161, -78.607644]).bindPopup('Food Bank of Central and Eastern NC').addTo(foodBanks);
+    var IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
+    var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
 
-    const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
-    const mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-   
-    const streets = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-  
-    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-  
-    const map = L.map('map', {
-      center: [35.994919, -79.299003],
-      zoom: 7,
-      layers: [streets, foodBanks]
-    });
-  
-    const baseLayers = {
-      'OpenStreetMap': osm,
-      'Streets': streets,
+//   Add layers to map //
+    var choropleths = {
+        'Child Food Insecurity Rate': childHungerRate,
+        'Food Insecurity Rate': overallHungerRate,
     };
+    var pointVectors = {
+        'Food Banks': foodBanks
+    }
   
-    const overlays = {
-      'Food Banks': foodBanks,
-    };
+    var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
+
+    // Adding SNAP retailers? //
+    // var crownHill = L.marker([39.75, -105.09]).bindPopup('This is Crown Hill Park.');
+    // var rubyHill = L.marker([39.68, -105.00]).bindPopup('This is Ruby Hill Park.');
   
-    const layerControl = L.control.layers(baseLayers, overlays).addTo(map);  
-  </script>
+    // var parks = L.layerGroup([crownHill, rubyHill]);
+    </script>
 </body>
 </html>
