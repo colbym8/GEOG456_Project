@@ -9,16 +9,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="crossorigin=""></script>  
     
+
     <script src="./ChoroplethData/js/overallHunger.js"></script>
     <script src="./ChoroplethData/js/childHunger.js"></script>
-    <!-- <script src="./ChoroplethData/js/disability.js"></script> -->
-    <!-- <script src="./ChoroplethData/js/education.js"></script>
-    <script src="./ChoroplethData/js/income_black_dif.js"></script>
-    <script src="./ChoroplethData/js/income_lat_dif.js"></script>
-    <script src="./ChoroplethData/js/mealCost.js"></script> -->
-    <!-- <script src="./ChoroplethData/js/poverty.js"></script>
-    <script src="./ChoroplethData/js/race_eth.js"></script>
-    <script src="./ChoroplethData/js/unemployment.js"></script> -->
+    <script src="./ChoroplethData/js/disability.js"></script>
+    <script src="./ChoroplethData/js/education.js"></script>
+    <script src="./ChoroplethData/js/incomeBlackDif.js"></script>
+    <script src="./ChoroplethData/js/incomeLatDif.js"></script>
+    <script src="./ChoroplethData/js/mealCost.js"></script>
+    <script src="./ChoroplethData/js/poverty.js"></script>
+    <script src="./ChoroplethData/js/raceEth.js"></script>
+    <script src="./ChoroplethData/js/unemployment.js"></script>
+    <script src="./PointData/SNAP.js"></script>
+
 
     <style>
         h1 {
@@ -72,13 +75,14 @@
 
         // OVERALL HUNGER //
         var selectedYear = '2010'
+
         function myStyleOH(feature) {
             return {
             "fillColor": getColorOH(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }};
         function getColorOH(colorScaleOH) {
             return colorScaleOH < 10 ? "#238b45" 
@@ -94,8 +98,22 @@
             overallHungerRate.remove()
             overallHungerRate = L.geoJSON(overallHunger, {style: myStyleOH}).addTo(map);
             document.getElementById('theYear').innerHTML = 'Year: '+ value  
-            }
+            };
+        // legend
+        // var legendOH = L.control({position: 'bottomright'});
+        //         legendOH.onAdd = function (map) {
+        //             var div = L.DomUtil.create('div', 'info legend'),
+        //                 grades = [0, 10, 15, 20],
+        //                 labels = [];
 
+        //             for (var i = 0; i < grades.length; i++) {
+        //                 div.innerHTML +=
+        //                     '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+        //                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + ' gal'+ '<br>' : '+ gal');
+        //             }
+        //             return div;
+        //         };
+        //         legendOH.addTo(map);
     // CHILD HUNGER //
         function myStyleCH(feature) {
 
@@ -104,7 +122,7 @@
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }};
 
         function getColorCH(colorScaleCH) {
@@ -124,218 +142,218 @@
             childHungerRate = L.geoJSON(childHunger, {style: myStyleCH}).addTo(map);
             document.getElementById('theYear').innerHTML = 'Year: '+ value  
         }
-        moveSlider('2010')
-        // // MEAL COST //
-        // function myStyle(feature) {
 
-        //     return {
-        //     "fillColor": getColorMH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorMH(colorScaleMC) {
-        //     return colorScaleMC < 0.10 ? "#238b45" 
-        //     :colorScaleMC < 0.15 ? "#ffffb2" 
-        //     :colorScaleMC < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+        //  MEAL COST
+        function myStyleMC(feature) {
 
-        //     var MC = L.geoJSON(mealCost, {style: myStyle}).addTo(map);
+            return {
+            "fillColor": getColorMC(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 1
+            }
+            };
+            function getColorMC(colorScaleMC) {
+            return colorScaleMC < 2 ? "#238b45" 
+            :colorScaleMC < 2.33 ? "#ffffb2" 
+            :colorScaleMC < 2.66 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     MC.remove()
-        //     MC = L.geoJSON(mealCost, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            var mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(map);
 
-        // // DISABILITY
-        // function myStyle(feature) {
+            function moveSlider(value) {
+            selectedYear = value;
+            mealCostRate.remove()
+            mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+        // DISABILITY
+        function myStyleD(feature) {
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            return {
+            "fillColor": getColorD(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 1
+            }
+            };
+            function getColorD(colorScaleD) {
+            return colorScaleD < 10 ? "#238b45" 
+            :colorScaleD < 15 ? "#ffffb2" 
+            :colorScaleD < 20 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
-        // // EDUCATIONAL ATTAINMENT LESS THAN HIGH SCHOOL DIPLOMA OR GED //
-        // function myStyle(feature) {
+            var disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(map);
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }};
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            function moveSlider(value) {
+            selectedYear = value;
+            disabilityRate.remove()
+            disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
+        // EDUCATIONAL ATTAINMENT LESS THAN HIGH SCHOOL DIPLOMA OR GED //
+        function myStyleE(feature) {
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            return {
+            "fillColor": getColorE(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }};
+            function getColorE(colorScaleE) {
+            return colorScaleE < 10 ? "#238b45" 
+            :colorScaleE < 15 ? "#ffffb2" 
+            :colorScaleE < 20 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            var educationRate = L.geoJSON(education, {style: myStyleE}).addTo(map);
+
+            function moveSlider(value) {
+            selectedYear = value;
+            educationRate.remove()
+            educationRate = L.geoJSON(education, {style: myStyleE}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
         // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND LATINO //
-        // function myStyle(feature) {
+        function myStyleIL(feature) {
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            return {
+            "fillColor": getColorIL(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }
+            };
+            function getColorIL(colorScaleIL) {
+            return colorScaleIL < 10000 ? "#238b45" 
+            :colorScaleIL < 15000 ? "#ffffb2" 
+            :colorScaleIL < 20000 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            var incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(map);
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            function moveSlider(value) {
+            selectedYear = value;
+            incomeLatDifRate.remove()
+            incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
         // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND BLACK POPULATION //
-        // function myStyle(feature) {
+        function myStyleIB(feature) {
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            return {
+            "fillColor": getColorIB(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }
+            };
+            function getColorIB(colorScaleIB) {
+            return colorScaleIB < 10000 ? "#238b45" 
+            :colorScaleIB < 15000 ? "#ffffb2" 
+            :colorScaleIB < 20000 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            var incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(map);
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            function moveSlider(value) {
+            selectedYear = value;
+            incomeBlackDifRate.remove()
+            incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
 
         // // POVERTY //
-        // function myStyle(feature) {
+        function myStyleP(feature) {
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            return {
+            "fillColor": getColorP(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }
+            };
+            function getColorP(colorScaleP) {
+            return colorScaleP < 10 ? "#238b45" 
+            :colorScaleP < 15 ? "#ffffb2" 
+            :colorScaleP < 20 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            var povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(map);
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            function moveSlider(value) {
+            selectedYear = value;
+            povertyRate.remove()
+            povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
 
         // // RACE AND ETHINICITY //
-        // function myStyle(feature) {
+        function myStyleRE(feature) {
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            return {
+            "fillColor": getColorRE(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }
+            };
+            function getColorRE(colorScaleRE) {
+            return colorScaleRE < 15 ? "#238b45" 
+            :colorScaleRE < 25 ? "#ffffb2" 
+            :colorScaleRE < 35 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            var raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(map);
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
+            function moveSlider(value) {
+            selectedYear = value;
+            raceEthRate.remove()
+            raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
         // // UNEMPLOYMENT //
-        // function myStyle(feature) {
+        function myStyleU(feature) {
 
-        //     return {
-        //     "fillColor": getColorOH(feature.properties[selectedYear]),
-        //     "color": "black",
-        //     "weight": 0.75,
-        //     "opacity": 2.0,
-        //     "fillOpacity": 0.7
-        //     }
-        //     };
-        //     function getColorOH(colorScaleOH) {
-        //     return colorScaleOH < 0.10 ? "#238b45" 
-        //     :colorScaleOH < 0.15 ? "#ffffb2" 
-        //     :colorScaleOH < 0.2 ? "#fd8d3c"
-        //     : '#e31a1c';
-        //     };
+            return {
+            "fillColor": getColorU(feature.properties[selectedYear]),
+            "color": "black",
+            "weight": 0.75,
+            "opacity": 2.0,
+            "fillOpacity": 0.7
+            }
+            };
+            function getColorU(colorScaleU) {
+            return colorScaleU < 10 ? "#238b45" 
+            :colorScaleU < 15 ? "#ffffb2" 
+            :colorScaleU < 20 ? "#fd8d3c"
+            : '#e31a1c';
+            };
 
-        //     var overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
+            var unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(map);
 
-        //     function moveSlider(value) {
-        //     selectedYear = value;
-        //     overallHungerRate.remove()
-        //     overallHungerRate = L.geoJSON(overallHunger, {style: myStyle}).addTo(map);
-        //     document.getElementById('theYear').innerHTML = 'Year: '+ value  
-        //     }
-        // moveSlider('2010')
+            function moveSlider(value) {
+            selectedYear = value;
+            unemploymentRate.remove()
+            unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(map);
+            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            }
+        moveSlider('2010')
 
     // Food Bank markers manually created
     var foodBanks = L.layerGroup().addTo(map);
@@ -348,22 +366,30 @@
     var IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
     var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
 
+    // SNAP Markers (Make marker clusters)
+    // L.geoJSON(SNAP).addTo(map);
+
 //   Add layers to map //
     var choropleths = {
-        'Child Food Insecurity Rate': childHungerRate,
         'Food Insecurity Rate': overallHungerRate,
+        'Child Food Insecurity Rate': childHungerRate,
+        'Average Meal Cost': mealCostRate,
+        'Disability Status': disabilityRate,
+        'Education Attainment: Less than high school diploma': mealCostRate,
+        'Household Income Difference: White - Latino': incomeLatDifRate,
+        'Household Income Difference: White - Black': incomeBlackDifRate,
+        'Poverty Rate': povertyRate,
+        'Ethnic Minority Rate': raceEthRate,
+        'Unemployment Rate': unemploymentRate
     };
     var pointVectors = {
-        'Food Banks': foodBanks
+        'Food Banks': foodBanks,
+        // 'SNAP Retailers': snapRetailers
     }
   
     var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
+    // map.removeLayer(overallHungerRate)
 
-    // Adding SNAP retailers? //
-    // var crownHill = L.marker([39.75, -105.09]).bindPopup('This is Crown Hill Park.');
-    // var rubyHill = L.marker([39.68, -105.00]).bindPopup('This is Ruby Hill Park.');
-  
-    // var parks = L.layerGroup([crownHill, rubyHill]);
     </script>
 </body>
 </html>
