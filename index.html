@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Insecurity Indicators</title>
-    <base target="_top">        
+    <base target="_top">      
+    <link rel="stylesheet" href="./style.css">  
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="crossorigin=""></script>  
     
-
     <script src="./ChoroplethData/js/overallHunger.js"></script>
     <script src="./ChoroplethData/js/childHunger.js"></script>
     <script src="./ChoroplethData/js/disability.js"></script>
@@ -21,50 +21,13 @@
     <script src="./ChoroplethData/js/raceEth.js"></script>
     <script src="./ChoroplethData/js/unemployment.js"></script>
     <script src="./PointData/SNAP.js"></script>
-
-
-    <style>
-        h1 {
-        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        font-size: 36px;
-        position: relative;
-        top: 10%;
-        text-align: center;
-        outline-style: ridge;
-        -webkit-text-stroke-width: 1px;
-        }
-        h2 {
-            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        }
-        h3 {
-            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        }
-        .legend {
-            line-height: 18px;
-            color: #000;
-            background-color: #ffffff;
-        }
-        .legend i {
-            width: 18px;
-            height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.7; 
-        }
-        #map { height: 400px;
-            width: 900px;
-            background-color: lightslategray;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
     <h1>Underlying Food Insecurity Indicators</h1>
     <h2 id="theYear">Year</h2>
-
         <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSlider(this.value)">
         <div id="map"></div>
-        <div class="legend"></div>
+        <div class="legendH"></div>
 
     <script>
         var map = L.map('map').setView([35.264919, -79.759003], 7);
@@ -75,329 +38,543 @@
 
         // OVERALL HUNGER //
         var selectedYear = '2010'
-
         function myStyleOH(feature) {
             return {
             "fillColor": getColorOH(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.75
-            }};
+            "fillOpacity": 15
+            }
+        };
         function getColorOH(colorScaleOH) {
-            return colorScaleOH < 10 ? "#238b45" 
-            :colorScaleOH < 15 ? "#ffffb2" 
-            :colorScaleOH < 20 ? "#fd8d3c"
-            : '#e31a1c';
-            };
-
+            return colorScaleOH < 10 ? "#2ca25f" 
+            :colorScaleOH < 15 ? "#a1d99b" 
+            :colorScaleOH < 20 ? "#ffffb2"
+            :colorScaleOH < 25 ? "#fd8d3c"
+            :'#e31a1c'
+        };
         var overallHungerRate = L.geoJSON(overallHunger, {style: myStyleOH}).addTo(map);
 
-        function moveSlider(value) {
-            selectedYear = value;
-            overallHungerRate.remove()
-            overallHungerRate = L.geoJSON(overallHunger, {style: myStyleOH}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
-            };
-        // legend
-        // var legendOH = L.control({position: 'bottomright'});
-        //         legendOH.onAdd = function (map) {
-        //             var div = L.DomUtil.create('div', 'info legend'),
-        //                 grades = [0, 10, 15, 20],
-        //                 labels = [];
-
-        //             for (var i = 0; i < grades.length; i++) {
-        //                 div.innerHTML +=
-        //                     '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-        //                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + ' gal'+ '<br>' : '+ gal');
-        //             }
-        //             return div;
-        //         };
-        //         legendOH.addTo(map);
     // CHILD HUNGER //
         function myStyleCH(feature) {
-
             return {
             "fillColor": getColorCH(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
-            }};
-
+            "fillOpacity": 1
+            }
+        };
         function getColorCH(colorScaleCH) {
-            return colorScaleCH < 15 ? "#238b45" 
+            return colorScaleCH < 10 ? "#2ca25f"
+            :colorScaleCH < 15 ? "#a1d99b" 
             :colorScaleCH < 20 ? "#ffffb2" 
             :colorScaleCH < 25 ? "#fd8d3c"
-            : '#e31a1c';
+            :'#e31a1c'
         };
-
         var childHungerRate = L.geoJSON(childHunger, {style: myStyleCH}).addTo(map);
 
+        var currentLayer = overallHungerRate;
         function moveSlider(value) {
             selectedYear = value;
-            // Remove geojson
-            childHungerRate.remove()
-            // new geojson
-            childHungerRate = L.geoJSON(childHunger, {style: myStyleCH}).addTo(map);
+            currentLayer.resetStyle()
             document.getElementById('theYear').innerHTML = 'Year: '+ value  
         }
+        moveSlider('2010')
 
-        //  MEAL COST
+        var legendOH = L.control({position: 'bottomright'});
+        var legendCH = L.control({position: 'bottomright'});
+
+        legendOH.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend'),
+                gradesH = [0, 10, 15, 20, 25]
+
+            for (var i = 0; i < gradesH.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColorOH(gradesH[i] + 1) + '"></i> ' +
+                    gradesH[i] + (gradesH[i + 1] ? '&ndash;' + gradesH[i + 1] + '%'+ '<br>' : '%+');
+            }
+            return div;
+        };
+        legendCH.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend'),
+                gradesH = [0, 10, 15, 20, 25]
+
+            for (var i = 0; i < gradesH.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColorCH(gradesH[i] + 1) + '"></i> ' +
+                    gradesH[i] + (gradesH[i + 1] ? '&ndash;' + gradesH[i + 1] + '%'+ '<br>' : '%+');
+            }
+            return div;
+        };
+        legendOH.addTo(map);
+
+    </script>
+        <br>
+        <h2>Cost of an Average Meal</h2>
+        <h2 id="theYearMC">Year</h2>
+            <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderMC(this.value)">
+            <div id="mapMC"></div>
+            <div class="legendMC"></div>
+            
+    <script>
+        var mapMC = L.map('mapMC').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapMC);
+
         function myStyleMC(feature) {
-
             return {
             "fillColor": getColorMC(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorMC(colorScaleMC) {
-            return colorScaleMC < 2 ? "#238b45" 
-            :colorScaleMC < 2.33 ? "#ffffb2" 
-            :colorScaleMC < 2.66 ? "#fd8d3c"
-            : '#e31a1c';
-            };
-
-            var mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(map);
-
-            function moveSlider(value) {
+        };
+        function getColorMC(colorScaleMC) {
+            return colorScaleMC < 2.50 ? "#2ca25f"
+            :colorScaleMC < 2.75 ? "#a1d99b" 
+            :colorScaleMC < 3.00 ? "#ffffb2" 
+            :colorScaleMC < 3.25 ? "#fd8d3c"
+            :'#e31a1c'
+        };
+        var mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(mapMC);
+        function moveSliderMC(value) {
             selectedYear = value;
             mealCostRate.remove()
-            mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(mapMC);
+            document.getElementById('theYearMC').innerHTML = 'Year: '+ value  
+        };
+        moveSliderMC('2010')
+
+        var legendMC = L.control({position: 'bottomright'});
+        legendMC.onAdd = function (mapMC) {
+            var divMC = L.DomUtil.create('divMC', 'info legend'),
+                gradesMC = [0, 2.50, 2.75, 3.00, 3.25]
+
+            for (var MC = 0; MC < gradesMC.length; MC++) {
+                divMC.innerHTML +=
+                    '<i style="background:' + getColorMC(gradesMC[MC] + 1) + '"></i> ' +
+                    '$' + gradesMC[MC] + (gradesMC[MC + 1] ? '&ndash;' + gradesMC[MC + 1] + '<br>' : '+');
             }
+            return divMC;
+        };
+        legendMC.addTo(mapMC);
+    </script>
+    <br>
 
-        // DISABILITY
+    <h2>Disability Rate</h2>
+    <h2 id="theYearD">Year</h2>
+    <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderD(this.value)">
+    <div id="mapD"></div>
+    <div class="legendD"></div>
+
+    <script>
+        var mapD = L.map('mapD').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapD);
+
         function myStyleD(feature) {
-
             return {
             "fillColor": getColorD(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorD(colorScaleD) {
+        };
+        function getColorD(colorScaleD) {
             return colorScaleD < 10 ? "#238b45" 
             :colorScaleD < 15 ? "#ffffb2" 
             :colorScaleD < 20 ? "#fd8d3c"
-            : '#e31a1c';
-            };
+            :colorScaleD >= 20 ? '#e31a1c'
+            : '#bdbdbd'
+        };
 
-            var disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(map);
-
-            function moveSlider(value) {
+        var disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(mapD);
+        function moveSliderD(value) {
             selectedYear = value;
             disabilityRate.remove()
-            disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
-            }
-        // EDUCATIONAL ATTAINMENT LESS THAN HIGH SCHOOL DIPLOMA OR GED //
-        function myStyleE(feature) {
+            disabilityRate = L.geoJSON(disability, {style: myStyleD}).addTo(mapD);
+            document.getElementById('theYearD').innerHTML = 'Year: '+ value  
+        };
+        moveSliderD('2010')
 
+        var legendD = L.control({position: 'bottomright'});
+        legendD.onAdd = function (mapD) {
+            var divD = L.DomUtil.create('divD', 'info legend'),
+                gradesD = [0, 10, 15, 20]
+
+            for (var D = 0; D < gradesD.length; D++) {
+                divD.innerHTML +=
+                    '<i style="background:' + getColorD(gradesD[D] + 1) + '"></i> ' +
+                    gradesD[D] + (gradesD[D + 1] ? '&ndash;' + gradesD[D + 1] + '%'+ '<br>' : '+ %');
+            }
+            return divD;
+        };
+        legendD.addTo(mapD);
+
+    </script>
+    <br>
+    <h2>Educational Attainment: Less than High School Diploma</h2>
+    <h2 id="theYearE">Year</h2>
+    <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderE(this.value)">
+    <div id="mapE"></div>
+    <div class="legendE"></div>
+    <script>
+        var mapE = L.map('mapE').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapE);
+
+        function myStyleE(feature) {
             return {
             "fillColor": getColorE(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
-            }};
-            function getColorE(colorScaleE) {
+            "fillOpacity": 1
+            }
+        };
+        function getColorE(colorScaleE) {
             return colorScaleE < 10 ? "#238b45" 
             :colorScaleE < 15 ? "#ffffb2" 
             :colorScaleE < 20 ? "#fd8d3c"
-            : '#e31a1c';
+            :colorScaleE >= 20 ? '#e31a1c'
+            : '#bdbdbd';            
+        };
+            var educationRate = L.geoJSON(education, {style: myStyleE}).addTo(mapE);
+            function moveSliderE(value) {
+                selectedYear = value;
+                educationRate.remove()
+                educationRate = L.geoJSON(education, {style: myStyleE}).addTo(mapE);
+                document.getElementById('theYearE').innerHTML = 'Year: '+ value  
             };
+            moveSliderE('2010')
 
-            var educationRate = L.geoJSON(education, {style: myStyleE}).addTo(map);
+        var legendE = L.control({position: 'bottomright'});
+        legendE.onAdd = function (mapE) {
+            var divE = L.DomUtil.create('divE', 'info legend'),
+                gradesE = [0, 10, 15, 20]
 
-            function moveSlider(value) {
-            selectedYear = value;
-            educationRate.remove()
-            educationRate = L.geoJSON(education, {style: myStyleE}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            for (var E = 0; E < gradesE.length; E++) {
+                divE.innerHTML +=
+                    '<i style="background:' + getColorE(gradesE[E] + 1) + '"></i> ' +
+                    gradesE[E] + (gradesE[E + 1] ? '&ndash;' + gradesE[E + 1] + '%'+ '<br>' : '%+');
             }
-        // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND LATINO //
-        function myStyleIL(feature) {
+            return divE;
+        };
+        legendE.addTo(mapE);
 
+    </script>  
+    <br>
+    <h2>Median White Household Income - Median Latino Houeshold Income</h2>
+    <h2 id="theYearIL">Year</h2>
+        <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderIL(this.value)">
+        <div id="mapIL"></div>
+        <div class="legendIL"></div>
+        
+    <script>
+        var mapIL = L.map('mapIL').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapIL);
+
+        function myStyleIL(feature) {
             return {
             "fillColor": getColorIL(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorIL(colorScaleIL) {
+        };
+        function getColorIL(colorScaleIL) {
             return colorScaleIL < 10000 ? "#238b45" 
             :colorScaleIL < 15000 ? "#ffffb2" 
             :colorScaleIL < 20000 ? "#fd8d3c"
-            : '#e31a1c';
-            };
-
-            var incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(map);
-
-            function moveSlider(value) {
+            :colorScaleIL >= 20000 ? '#e31a1c'
+            : '#bdbdbd';        
+        };
+        var incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(mapIL);
+        function moveSliderIL(value) {
             selectedYear = value;
             incomeLatDifRate.remove()
-            incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
-            }
-        // // MEDIAN HH INCOME DIFFERENCE BETWEEN WHITE AND BLACK POPULATION //
-        function myStyleIB(feature) {
+            incomeLatDifRate = L.geoJSON(incomeLatDif, {style: myStyleIL}).addTo(mapIL);
+            document.getElementById('theYearIL').innerHTML = 'Year: '+ value  
+        };
+        moveSliderIL('2010')
 
+        var legendIL = L.control({position: 'bottomright'});
+        legendIL.onAdd = function (mapIL) {
+            var divIL = L.DomUtil.create('divIL', 'info legend'),
+                gradesIL = [0, 10000, 15000, 20000]
+
+            for (var IL = 0; IL < gradesIL.length; IL++) {
+                divIL.innerHTML +=
+                    '<i style="background:' + getColorIL(gradesIL[IL] + 1) + '"></i> ' +
+                    '$' + gradesIL[IL] + (gradesIL[IL + 1] ? '&ndash;' + gradesIL[IL + 1] + '<br>' : '+');
+            }
+            return divIL;
+        };
+        legendIL.addTo(mapIL);
+
+    </script>
+    <br>
+    <h2>Median White Household Income - Median Black Houeshold Income</h2>
+    <h2 id="theYearIB">Year</h2>
+    <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderIB(this.value)">
+    <div id="mapIB"></div>
+    <div class="legendIB"></div>
+        
+    <script>
+        var mapIB = L.map('mapIB').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapIB);
+
+        function myStyleIB(feature) {
             return {
             "fillColor": getColorIB(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorIB(colorScaleIB) {
+        };
+        function getColorIB(colorScaleIB) {
             return colorScaleIB < 10000 ? "#238b45" 
             :colorScaleIB < 15000 ? "#ffffb2" 
             :colorScaleIB < 20000 ? "#fd8d3c"
-            : '#e31a1c';
-            };
-
-            var incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(map);
-
-            function moveSlider(value) {
+            :colorScaleIB >= 20000 ? '#e31a1c'
+            : '#bdbdbd';        
+        };
+        var incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(mapIB);
+        function moveSliderIB(value) {
             selectedYear = value;
             incomeBlackDifRate.remove()
-            incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            incomeBlackDifRate = L.geoJSON(incomeBlackDif, {style: myStyleIB}).addTo(mapIB);
+            document.getElementById('theYearIB').innerHTML = 'Year: '+ value  
+        };
+        moveSliderIB('2010')
+
+        var legendIB = L.control({position: 'bottomright'});
+        legendIB.onAdd = function (mapIB) {
+            var divIB = L.DomUtil.create('divIB', 'info legend'),
+                gradesIB = [0, 10000, 15000, 20000]
+
+            for (var IB = 0; IB < gradesIB.length; IB++) {
+                divIB.innerHTML +=
+                    '<i style="background:' + getColorIB(gradesIB[IB] + 1) + '"></i> ' +
+                    '$' + gradesIB[IB] + (gradesIB[IB + 1] ? '&ndash;' + gradesIB[IB + 1] + '<br>' : '+');
             }
+            return divIB;
+        };
+        legendIB.addTo(mapIB);
 
-        // // POVERTY //
+    </script>
+    <br>
+    <h2>Poverty Rate</h2>
+    <h2 id="theYearP">Year</h2>
+    <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderP(this.value)">
+    <div id="mapP"></div>
+    <div class="legendP"></div>
+        
+    <script>
+        var mapP = L.map('mapP').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapP);      
+
         function myStyleP(feature) {
-
             return {
             "fillColor": getColorP(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
             };
             function getColorP(colorScaleP) {
             return colorScaleP < 10 ? "#238b45" 
             :colorScaleP < 15 ? "#ffffb2" 
             :colorScaleP < 20 ? "#fd8d3c"
-            : '#e31a1c';
+            :colorScaleP >= 20 ? '#e31a1c'
+            : '#bdbdbd';            
+        };
+
+            var povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(mapP);
+            function moveSliderP(value) {
+                selectedYear = value;
+                povertyRate.remove()
+                povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(mapP); 
+                document.getElementById('theYearP').innerHTML = 'Year: '+ value  
             };
+            moveSliderP('2010')
 
-            var povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(map);
+            var legendP = L.control({position: 'bottomright'});
+        legendP.onAdd = function (mapP) {
+            var divP = L.DomUtil.create('divP', 'info legend'),
+                gradesP = [0, 10, 15, 20]
 
-            function moveSlider(value) {
-            selectedYear = value;
-            povertyRate.remove()
-            povertyRate = L.geoJSON(poverty, {style: myStyleP}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            for (var P = 0; P < gradesP.length; P++) {
+                divP.innerHTML +=
+                    '<i style="background:' + getColorP(gradesP[P] + 1) + '"></i> ' +
+                    gradesP[P] + (gradesP[P + 1] ? '&ndash;' + gradesP[P + 1] + '%'+ '<br>' : '%+');
             }
+            return divP;
+        };
+        legendP.addTo(mapP);
 
-        // // RACE AND ETHINICITY //
+    </script>
+    <br>
+    <h2>Ethnic Minority Percentage</h2>
+    <h2 id="theYearRE">Year</h2>
+    <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderRE(this.value)">
+    <div id="mapRE"></div>
+    <div class="legendRE"></div>
+        
+    <script>
+        var mapRE = L.map('mapRE').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapRE);   
+
         function myStyleRE(feature) {
-
             return {
             "fillColor": getColorRE(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorRE(colorScaleRE) {
+        };
+        function getColorRE(colorScaleRE) {
             return colorScaleRE < 15 ? "#238b45" 
             :colorScaleRE < 25 ? "#ffffb2" 
             :colorScaleRE < 35 ? "#fd8d3c"
-            : '#e31a1c';
-            };
+            :colorScaleRE >= 35 ? '#e31a1c'
+            :'#bdbdbd';            
+        };
+            var raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(mapRE);
+        function moveSliderRE(value) {
+                selectedYear = value;
+                raceEthRate.remove()
+                raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(mapRE);
+                document.getElementById('theYearRE').innerHTML = 'Year: '+ value  
+        };
+        moveSliderRE('2010')
 
-            var raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(map);
+        var legendRE = L.control({position: 'bottomright'});
+        legendRE.onAdd = function (mapRE) {
+            var divRE = L.DomUtil.create('divRE', 'info legend'),
+                gradesRE = [0, 15, 25, 35]
 
-            function moveSlider(value) {
-            selectedYear = value;
-            raceEthRate.remove()
-            raceEthRate = L.geoJSON(raceEth, {style: myStyleRE}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            for (var RE = 0; RE < gradesRE.length; RE++) {
+                divRE.innerHTML +=
+                    '<i style="background:' + getColorRE(gradesRE[RE] + 1) + '"></i> ' +
+                    gradesRE[RE] + (gradesRE[RE + 1] ? '&ndash;' + gradesRE[RE + 1] + '%'+ '<br>' : '%+');
             }
-        // // UNEMPLOYMENT //
-        function myStyleU(feature) {
+            return divRE;
+        };
+        legendRE.addTo(mapRE);
 
+    </script>
+        <br>
+    <h2>Unemployment Rate</h2>
+        <h2 id="theYearU">Year</h2>
+        <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderU(this.value)">
+        <div id="mapU"></div>
+        <div class="legendU"></div>
+        
+    <script>
+        var mapU = L.map('mapU').setView([35.264919, -79.759003], 7);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+        }).addTo(mapU); 
+
+        function myStyleU(feature) {
             return {
             "fillColor": getColorU(feature.properties[selectedYear]),
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 0.7
+            "fillOpacity": 1
             }
-            };
-            function getColorU(colorScaleU) {
-            return colorScaleU < 10 ? "#238b45" 
-            :colorScaleU < 15 ? "#ffffb2" 
-            :colorScaleU < 20 ? "#fd8d3c"
-            : '#e31a1c';
-            };
-
-            var unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(map);
-
-            function moveSlider(value) {
+        };
+        function getColorU(colorScaleU) {
+            return colorScaleU < 5 ? "#238b45" 
+            :colorScaleU < 10 ? "#ffffb2" 
+            :colorScaleU < 15 ? "#fd8d3c"
+            :colorScaleU >= 15 ? '#e31a1c'
+            : '#bdbdbd';            
+        };
+        var unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(mapU);
+        function moveSliderU(value) {
             selectedYear = value;
             unemploymentRate.remove()
-            unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(map);
-            document.getElementById('theYear').innerHTML = 'Year: '+ value  
+            unemploymentRate = L.geoJSON(unemployment, {style: myStyleU}).addTo(mapU);
+            document.getElementById('theYearU').innerHTML = 'Year: '+ value  
+        };
+        moveSliderU('2010')
+
+        var legendU = L.control({position: 'bottomright'});
+        legendU.onAdd = function (mapU) {
+            var divU = L.DomUtil.create('divU', 'info legend'),
+                gradesU = [0, 5, 10, 15]
+
+            for (var U = 0; U < gradesU.length; U++) {
+                divU.innerHTML +=
+                    '<i style="background:' + getColorU(gradesU[U] + 1) + '"></i> ' +
+                    gradesU[U] + (gradesU[U + 1] ? '&ndash;' + gradesU[U + 1] + '%'+ '<br>' : '%+');
             }
-        moveSlider('2010')
+            return divU;
+        };
+        legendU.addTo(mapU);
 
-    // Food Bank markers manually created
-    var foodBanks = L.layerGroup().addTo(map);
-  
-    var mannaFB = L.marker([35.57501, -82.501873]).bindPopup('MANNA Food Bank').addTo(foodBanks);
-    var secHarvMet = L.marker([35.239401, -80.837983]).bindPopup('Second Harvest Food Bank of Metrolina').addTo(foodBanks);
-    var FBAbermarle = L.marker([36.285388, -76.213284]).bindPopup('Food Bank of the Abermarle').addTo(foodBanks);
-    var secHarvSE = L.marker([35.034307, -78.908828]).bindPopup('Second Harvest of Southeast NC').addTo(foodBanks);
-    var FBCE = L.marker([35.831161, -78.607644]).bindPopup('Food Bank of Central and Eastern NC').addTo(foodBanks);
-    var IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
-    var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
+    </script>
+    <!-- Food Bank markers manually created -->
+    <script>
+        var foodBanks = L.layerGroup().addTo(map);
 
-    // SNAP Markers (Make marker clusters)
-    // L.geoJSON(SNAP).addTo(map);
+        var mannaFB = L.marker([35.57501, -82.501873]).bindPopup('MANNA Food Bank').addTo(foodBanks);
+        var secHarvMet = L.marker([35.239401, -80.837983]).bindPopup('Second Harvest Food Bank of Metrolina').addTo(foodBanks);
+        var FBAbermarle = L.marker([36.285388, -76.213284]).bindPopup('Food Bank of the Abermarle').addTo(foodBanks);
+        var secHarvSE = L.marker([35.034307, -78.908828]).bindPopup('Second Harvest of Southeast NC').addTo(foodBanks);
+        var FBCE = L.marker([35.831161, -78.607644]).bindPopup('Food Bank of Central and Eastern NC').addTo(foodBanks);
+        var IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
+        var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
 
-//   Add layers to map //
-    var choropleths = {
-        // 'Food Insecurity Rate': overallHungerRate,
-        // 'Child Food Insecurity Rate': childHungerRate,
-        // 'Average Meal Cost': mealCostRate,
-        // 'Disability Status': disabilityRate,
-        // 'Education Attainment: Less than high school diploma': mealCostRate,
-        // 'Household Income Difference: White - Latino': incomeLatDifRate,
-        // 'Household Income Difference: White - Black': incomeBlackDifRate,
-        'Poverty Rate': povertyRate,
-        // 'Ethnic Minority Rate': raceEthRate,
-        'Unemployment Rate': unemploymentRate
-    };
-    var pointVectors = {
-        'Food Banks': foodBanks,
-        // 'SNAP Retailers': snapRetailers
-    }
-  
-    var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
-    // map.removeLayer(overallHungerRate)
+        // SNAP Markers (Make marker clusters)
+        // L.geoJSON(SNAP).addTo(map);
 
-    map.on('baselayerchange', onOverlayAdd);
+        //   Add layers to map //
+        var choropleths = {
+            'Food Insecurity Rate': overallHungerRate,
+            'Child Food Insecurity Rate': childHungerRate
+        };
+        var pointVectors = {
+            'Food Banks': foodBanks,
+            // 'SNAP Retailers': snapRetailers
+        };
+        var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
+        map.on('baselayerchange', layerChange);// leaflet event, when you change an overlay it will be triggered. 
 
-    function onOverlayAdd(e){
-    currentLayer = e.layer;
-    document.getElementsByClassName('legend').innerHTML = e.name
-    }
-var currentLayer = undefined
-
+        function layerChange(e){
+            currentLayer = e.layer;  // change the value of currentLayer
+            document.getElementById('legend').innerHTML = e.name // change the innerHTML of the div with id = 'legend'
+        } 
     </script>
 </body>
 </html>
