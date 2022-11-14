@@ -110,17 +110,6 @@
         };
         legendOH.addTo(map);
 
-        map.on('overlayadd', function (eventLayer) {
-    // Switch to the Population legend...
-    if (eventLayer.name === 'Population') {
-        this.removeControl(legendCH);
-        legendOH.addTo(this);
-    } else { // Or switch to the Population Change legend...
-        this.removeControl(legendOH);
-        legendCH.addTo(this);
-    }
-});
-
     </script>
         <br>
         <h2>Cost of an Average Meal</h2>
