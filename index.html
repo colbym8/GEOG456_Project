@@ -82,7 +82,7 @@
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 1
+            "fillOpacity": 0.75
             }};
         function getColorOH(colorScaleOH) {
             return colorScaleOH < 10 ? "#238b45" 
@@ -122,7 +122,7 @@
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 1
+            "fillOpacity": 0.7
             }};
 
         function getColorCH(colorScaleCH) {
@@ -151,7 +151,7 @@
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 1
+            "fillOpacity": 0.7
             }
             };
             function getColorMC(colorScaleMC) {
@@ -178,7 +178,7 @@
             "color": "black",
             "weight": 0.75,
             "opacity": 2.0,
-            "fillOpacity": 1
+            "fillOpacity": 0.7
             }
             };
             function getColorD(colorScaleD) {
@@ -371,15 +371,15 @@
 
 //   Add layers to map //
     var choropleths = {
-        'Food Insecurity Rate': overallHungerRate,
-        'Child Food Insecurity Rate': childHungerRate,
-        'Average Meal Cost': mealCostRate,
-        'Disability Status': disabilityRate,
-        'Education Attainment: Less than high school diploma': mealCostRate,
-        'Household Income Difference: White - Latino': incomeLatDifRate,
-        'Household Income Difference: White - Black': incomeBlackDifRate,
+        // 'Food Insecurity Rate': overallHungerRate,
+        // 'Child Food Insecurity Rate': childHungerRate,
+        // 'Average Meal Cost': mealCostRate,
+        // 'Disability Status': disabilityRate,
+        // 'Education Attainment: Less than high school diploma': mealCostRate,
+        // 'Household Income Difference: White - Latino': incomeLatDifRate,
+        // 'Household Income Difference: White - Black': incomeBlackDifRate,
         'Poverty Rate': povertyRate,
-        'Ethnic Minority Rate': raceEthRate,
+        // 'Ethnic Minority Rate': raceEthRate,
         'Unemployment Rate': unemploymentRate
     };
     var pointVectors = {
@@ -389,6 +389,14 @@
   
     var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
     // map.removeLayer(overallHungerRate)
+
+    map.on('baselayerchange', onOverlayAdd);
+
+    function onOverlayAdd(e){
+    currentLayer = e.layer;
+    document.getElementsByClassName('legend').innerHTML = e.name
+    }
+var currentLayer = undefined
 
     </script>
 </body>

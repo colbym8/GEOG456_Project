@@ -18,6 +18,46 @@ h1 {
         color: #000;
         background-color: #ffffff;
     }
+    .legendMC {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendD {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendE {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendIB {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendIL {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendP {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendRE {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
+    .legendU {
+        line-height: 18px;
+        color: #000;
+        background-color: #ffffff;
+    }
     .legend i {
         width: 18px;
         height: 18px;
@@ -26,6 +66,46 @@ h1 {
         opacity: 0.7; 
     }
     #map { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapMC { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapD { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapE { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapIB { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapIL { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapP { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapRE { height: 400px;
+        width: 900px;
+        background-color: lightslategray;
+        text-align: center; 
+    }
+    #mapU { height: 400px;
         width: 900px;
         background-color: lightslategray;
         text-align: center; 
