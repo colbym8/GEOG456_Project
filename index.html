@@ -139,7 +139,9 @@
             :colorScaleMC < 2.75 ? "#a1d99b" 
             :colorScaleMC < 3.00 ? "#ffffb2" 
             :colorScaleMC < 3.25 ? "#fd8d3c"
-            :'#e31a1c'
+            :colorScaleMC < 3.50 ? '#e31a1c'
+            :colorScaleMC < 3.75 ? '#b10026'
+            :'#800026'
         };
         var mealCostRate = L.geoJSON(mealCost, {style: myStyleMC}).addTo(mapMC);
         function moveSliderMC(value) {
@@ -153,16 +155,17 @@
         var legendMC = L.control({position: 'bottomright'});
         legendMC.onAdd = function (mapMC) {
             var divMC = L.DomUtil.create('divMC', 'info legend'),
-                gradesMC = [0, 2.50, 2.75, 3.00, 3.25]
+                gradesMC = [0, 2.50, 2.75, 3.00, 3.25, 3.50, 3.75]
 
-            for (var MC = 0; MC < gradesMC.length; MC++) {
+            for (var M = 0; M < gradesMC.length; M++) {
                 divMC.innerHTML +=
-                    '<i style="background:' + getColorMC(gradesMC[MC] + 1) + '"></i> ' +
-                    '$' + gradesMC[MC] + (gradesMC[MC + 1] ? '&ndash;' + gradesMC[MC + 1] + '<br>' : '+');
+                    '<i style="background:' + getColorMC(gradesMC[M] + 1) + '"></i> ' +
+                    '$'+ gradesMC[M] + (gradesMC[M + 1] ? '&ndash;' + gradesMC[M + 1] + '<br>' : '+');
             }
             return divMC;
         };
         legendMC.addTo(mapMC);
+
     </script>
     <br><br>
     <h2>Food Insecurity Rates Based on Ethnicity</h2>
