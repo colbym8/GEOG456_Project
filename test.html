@@ -557,7 +557,7 @@
         var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
 
         // SNAP Markers (Make marker clusters)
-        // L.geoJSON(SNAP).addTo(map);
+        L.geoJSON(SNAP).addTo(map);
 
         //   Add layers to map //
         var choropleths = {
@@ -566,7 +566,7 @@
         };
         var pointVectors = {
             'Food Banks': foodBanks,
-            // 'SNAP Retailers': snapRetailers
+            'SNAP Retailers': snapRetailers
         };
         var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
         map.on('baselayerchange', layerChange);// leaflet event, when you change an overlay it will be triggered. 

@@ -20,10 +20,10 @@
     <script src="./ChoroplethData/js/poverty.js"></script>
     <script src="./ChoroplethData/js/raceEth.js"></script>
     <script src="./ChoroplethData/js/unemployment.js"></script>
-    <script src="./PointData/SNAP.js"></script>
 </head>
 <body>
     <h1>Underlying Food Insecurity Indicators</h1>
+    <h2>Food Insecurity Rates</h2>
     <h2 id="theYear">Year</h2>
         <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSlider(this.value)">
         <div id="map"></div>
@@ -164,8 +164,10 @@
         };
         legendMC.addTo(mapMC);
     </script>
-    <br>
-
+    <br><br>
+    <h2>Food Insecurity Rates Based on Ethnicity</h2>
+    <img src="./food_insecurity_graph.jpg" alt="Graph" width="1200px">
+<br><br>
     <h2>Disability Rate</h2>
     <h2 id="theYearD">Year</h2>
     <input type="range" name="year" value="2010" min="2010" max="2020" oninput="moveSliderD(this.value)">
@@ -556,9 +558,6 @@
         var IFFS = L.marker([35.689086, -78.675118]).bindPopup('Inter-Faith Food Shuttle').addTo(foodBanks);
         var secHarvNW = L.marker([36.053473, -80.207308]).bindPopup('Second Harvest of Northwest NC').addTo(foodBanks);
 
-        // SNAP Markers (Make marker clusters)
-        // L.geoJSON(SNAP).addTo(map);
-
         //   Add layers to map //
         var choropleths = {
             'Food Insecurity Rate': overallHungerRate,
@@ -566,7 +565,6 @@
         };
         var pointVectors = {
             'Food Banks': foodBanks,
-            // 'SNAP Retailers': snapRetailers
         };
         var layerControl = L.control.layers(choropleths, pointVectors).addTo(map);
         map.on('baselayerchange', layerChange);// leaflet event, when you change an overlay it will be triggered. 
@@ -576,5 +574,7 @@
             document.getElementById('legend').innerHTML = e.name // change the innerHTML of the div with id = 'legend'
         } 
     </script>
+    <p>Sources: <br><br>Gundersen, C., Strayer, M., Dewey, A., Hake, M., & Engelhard, E. (2021). Map the Meal Gap 2010-2021: An Analysis of County and Congressional District Food Insecurity and County Food Cost in the United States in 2010-2020. Feeding America. 
+    <br><br>U.S. Census Bureau, 2010-2021 American Community Survey 1-Year Estimates</p>
 </body>
 </html>
